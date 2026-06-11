@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-E-A-T Auditor</title>
+<meta name="description" content="Paste HTML or a URL's source code, get audited for Experience, Expertise, Authoritativeness, Trust signals. Checks author bylines, schema, dates, sources, contact info.">
+<meta property="og:title" content="E-E-A-T Auditor">
+<meta property="og:description" content="Audit any page's HTML for E-E-A-T signals: author byline, Person schema, dates, source links, contact info, sameAs.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://0xelitesystem.github.io/e-e-a-t-auditor/og.png">
+<meta property="og:url" content="https://0xelitesystem.github.io/e-e-a-t-auditor/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="E-E-A-T Auditor">
+<meta name="twitter:description" content="Audit any page's HTML for E-E-A-T signals.">
+<meta name="twitter:image" content="https://0xelitesystem.github.io/e-e-a-t-auditor/og.png">
+<style>
+:root {
+  --bg: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-input: #f1f3f5;
+  --ink: #0f1419;
+  --ink-soft: #495159;
+  --ink-faint: #8e96a0;
+  --rule: #d9dee3;
+  --rule-soft: #e8ecef;
+  --teal: #1d6b73;
+  --teal-soft: #2a8a93;
+  --citrine: #c8a428;
+  --citrine-soft: #e0bd45;
+  --good: #2a7a4a;
+  --warn: #b07028;
+  --bad: #b03838;
+  --mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+[data-theme="dark"] {
+  --bg: #0e1216;
+  --bg-card: #161b21;
+  --bg-input: #1c2128;
+  --ink: #e6ebef;
+  --ink-soft: #a8b0b8;
+  --ink-faint: #6a7280;
+  --rule: #2a3138;
+  --rule-soft: #1e242a;
+  --teal: #4ab0b8;
+  --teal-soft: #6dc4cc;
+  --citrine: #e0bd45;
+  --good: #6aa874;
+  --warn: #d4a548;
+  --bad: #d97070;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+.wrap { max-width: 1320px; margin: 0 auto; padding: 28px 28px 80px; }
+
+header {
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.lab-mark {
+  width: 36px;
+  height: 36px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--teal);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: -0.02em;
+}
+.brand h1 {
+  font-size: 22px;
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+.brand .sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 7px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.theme-toggle:hover { border-color: var(--teal); color: var(--teal); }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 24px;
+}
+@media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 22px 24px;
+}
+.card h2 {
+  font-size: 15px;
+  margin: 0 0 4px 0;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card h2 .num {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--teal);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+.card .h2-sub {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+}
+
+textarea.html-input {
+  width: 100%;
+  min-height: 360px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.55;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  border-radius: 4px;
+  resize: vertical;
+}
+textarea.html-input:focus { outline: none; border-color: var(--teal); }
+
+.actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.btn {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 9px 16px;
+  border: 1.5px solid var(--teal);
+  background: var(--teal);
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.btn:hover { background: var(--teal-soft); border-color: var(--teal-soft); }
+.btn.secondary { background: transparent; color: var(--teal); }
+.btn.secondary:hover { background: var(--teal); color: #fff; }
+.btn.ghost { background: transparent; border-color: var(--rule); color: var(--ink-soft); }
+.btn.ghost:hover { border-color: var(--ink); color: var(--ink); }
+
+.score-banner {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 22px;
+  align-items: center;
+}
+.score-circle {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  border: 4px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.score-circle.high { border-color: var(--good); color: var(--good); }
+.score-circle.mid { border-color: var(--warn); color: var(--warn); }
+.score-circle.low { border-color: var(--bad); color: var(--bad); }
+.score-text h3 { margin: 0 0 4px 0; font-size: 16px; font-weight: 600; }
+.score-text p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+.score-meta {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.score-meta .num { color: var(--ink); font-weight: 600; font-size: 14px; display: block; }
+
+.dimension {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.dim-head {
+  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--bg-input);
+}
+.dim-letter {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #fff;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dim-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.dim-title small {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-weight: 400;
+  margin-top: 1px;
+}
+.dim-score {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 3px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+}
+.dim-score.high { color: var(--good); border-color: var(--good); }
+.dim-score.mid { color: var(--warn); border-color: var(--warn); }
+.dim-score.low { color: var(--bad); border-color: var(--bad); }
+
+.check-list { padding: 6px 20px 14px; }
+.check {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 12px;
+  padding: 9px 0;
+  align-items: start;
+  border-bottom: 1px dashed var(--rule-soft);
+  font-size: 13px;
+}
+.check:last-child { border-bottom: none; }
+.check-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.check.pass .check-icon { background: var(--good); }
+.check.warn .check-icon { background: var(--warn); }
+.check.fail .check-icon { background: var(--bad); }
+.check-label { color: var(--ink); }
+.check-detail {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+  font-family: var(--mono);
+}
+.check-pts {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+
+.placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ink-faint);
+  font-size: 14px;
+  background: var(--bg-input);
+  border: 1px dashed var(--rule);
+  border-radius: 6px;
+}
+
+footer {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+}
+footer a { color: var(--teal); text-decoration: none; font-weight: 600; }
+footer a:hover { text-decoration: underline; }
+[data-theme="dark"] footer a { color: var(--teal-soft); }
+.notice {
+  background: var(--bg-input);
+  border-left: 3px solid var(--citrine);
+  padding: 10px 14px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-top: 14px;
+  border-radius: 0 4px 4px 0;
+}
+</style>
+</head>
+<body data-theme="light">
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="lab-mark">E&middot;A</div>
+      <div>
+        <h1>E-E-A-T Auditor</h1>
+        <div class="sub">Page-level forensic audit &middot; Experience, Expertise, Authoritativeness, Trust</div>
+      </div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle">Dark mode</button>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <h2><span class="num">01</span>Source HTML</h2>
+      <div class="h2-sub">Paste the full HTML of a page (View Source > Select All > Copy). Tool runs entirely client-side.</div>
+      <textarea class="html-input" id="html-input" placeholder="<!DOCTYPE html>&#10;<html>&#10;  <head>...</head>&#10;  <body>...</body>&#10;</html>"></textarea>
+      <div class="actions">
+        <button class="btn" id="audit-btn">Run audit</button>
+        <button class="btn ghost" data-example="strong">Load strong example</button>
+        <button class="btn ghost" data-example="weak">Load weak example</button>
+        <button class="btn ghost" data-example="clear">Clear</button>
+      </div>
+      <div class="notice">
+        This tool does not fetch URLs. Paste source HTML here. To get a page's source, open it in a browser, right-click, "View page source", then Select All and Copy.
+      </div>
+    </div>
+
+    <div>
+      <div class="score-banner" id="score-banner">
+        <div class="score-circle" id="score-circle">0</div>
+        <div class="score-text">
+          <h3 id="score-title">Awaiting input</h3>
+          <p id="score-desc">Paste page HTML and click "Run audit".</p>
+        </div>
+        <div class="score-meta">
+          <span class="num" id="checks-passed">0</span>
+          Checks passed
+        </div>
+      </div>
+      <div id="dim-list">
+        <div class="placeholder">Audit results will appear here.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Built by <a href="https://github.com/0xelitesystem" target="_blank" rel="noopener">0xelitesystem</a>. Pairs with <a href="https://github.com/0xelitesystem/ai-citability-scorer" target="_blank" rel="noopener">ai-citability-scorer</a>, <a href="https://github.com/0xelitesystem/schema-markup-generator" target="_blank" rel="noopener">schema-markup-generator</a>, <a href="https://github.com/0xelitesystem/llms-txt-generator" target="_blank" rel="noopener">llms-txt-generator</a>, and <a href="https://github.com/0xelitesystem/geo-audit-checklist" target="_blank" rel="noopener">geo-audit-checklist</a>.
+  </footer>
+</div>
+
+<script>
+'use strict';
+
+const $ = (id) => document.getElementById(id);
+
+const EXAMPLES = {
+  strong: `<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Why BYOK SaaS Beats Bundled Pricing</title>
+<meta name="description" content="Side-by-side cost analysis of BYOK versus bundled SaaS, with data from 2026 pricing study.">
+<meta name="author" content="Jane Cole">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Why BYOK SaaS Beats Bundled Pricing",
+  "author": {
+    "@type": "Person",
+    "name": "Jane Cole",
+    "url": "https://example.com/authors/jane-cole",
+    "sameAs": [
+      "https://github.com/janecole",
+      "https://linkedin.com/in/janecole",
+      "https://twitter.com/janecole"
+    ]
+  },
+  "datePublished": "2026-03-15",
+  "dateModified": "2026-04-20",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Cole Research",
+    "url": "https://example.com"
+  }
+}
+<\/script>
+</head>
+<body>
+<article>
+<h1>Why BYOK SaaS Beats Bundled Pricing</h1>
+<div class="byline">By <a rel="author" href="/authors/jane-cole">Jane Cole</a>, published <time datetime="2026-03-15">March 15, 2026</time>, updated <time datetime="2026-04-20">April 20, 2026</time></div>
+<p>BYOK pricing saves users 60 to 90 percent on AI tool subscriptions, according to <a href="https://example.com/byok-study-2026">our 2026 pricing study</a> of 240 indie SaaS buyers.</p>
+<p>For more on methodology, see <a href="https://example.com/methodology">the full methodology</a> or <a href="/contact">contact the author</a>.</p>
+<aside class="author-bio">
+<h3>About Jane Cole</h3>
+<p>Jane has analyzed SaaS pricing models for 8 years. Previously at McKinsey. <a href="/authors/jane-cole">Full bio and credentials</a>.</p>
+</aside>
+</article>
+</body>
+</html>`,
+  weak: `<!DOCTYPE html>
+<html>
+<head>
+<title>The Best AI Tools for 2026</title>
+</head>
+<body>
+<h1>The Best AI Tools for 2026</h1>
+<p>In today's fast-paced world, AI tools are revolutionary. There are many great options to choose from. We've leveraged our expertise to bring you the best picks.</p>
+<p>It's important to find tools that work for you. Don't forget what we covered earlier.</p>
+</body>
+</html>`,
+  clear: ''
+};
+
+const CHECKS = {
+  experience: {
+    letter: 'E',
+    label: 'Experience',
+    sub: 'First-person evidence the author has done the thing',
+    checks: [
+      { id: 'first-person', label: 'First-person language present', pts: 5, fn: (doc, text) => {
+        const fp = (text.match(/\b(I |we |our |my |us )/gi) || []).length;
+        if (fp >= 5) return { pass: 'pass', detail: `${fp} first-person markers found.` };
+        if (fp >= 1) return { pass: 'warn', detail: `${fp} first-person markers. More signals lived experience.` };
+        return { pass: 'fail', detail: 'No first-person language. Pages with zero "I" or "we" score lower for Experience.' };
+      }},
+      { id: 'concrete-numbers', label: 'Concrete numbers in body', pts: 5, fn: (doc, text) => {
+        const nums = (text.match(/\b\d+(?:[.,]\d+)?(%|x| percent| million| billion| years?| months?| days?)?\b/gi) || []).length;
+        if (nums >= 5) return { pass: 'pass', detail: `${nums} numeric facts in body.` };
+        if (nums >= 2) return { pass: 'warn', detail: `${nums} numeric facts. More raises Experience signal.` };
+        return { pass: 'fail', detail: 'Very few specific numbers. Experience signals come from concrete data.' };
+      }},
+      { id: 'case-study', label: 'Case study or example language', pts: 4, fn: (doc, text) => {
+        const hits = (text.match(/\b(for example|case study|in practice|when we|here's how|the time I|last (year|month|quarter)|in (20\d{2}))/gi) || []).length;
+        if (hits >= 2) return { pass: 'pass', detail: `${hits} concrete-example phrases found.` };
+        if (hits === 1) return { pass: 'warn', detail: 'One example phrase. Add more to show lived experience.' };
+        return { pass: 'fail', detail: 'No example or case-study phrases. Reads as abstract.' };
+      }}
+    ]
+  },
+  expertise: {
+    letter: 'E',
+    label: 'Expertise',
+    sub: 'Credentials and depth markers',
+    checks: [
+      { id: 'author-byline', label: 'Author byline present', pts: 6, fn: (doc) => {
+        const byline = doc.querySelector('[rel="author"], .byline, .author, [class*="author-name"], [itemprop="author"]');
+        if (byline) return { pass: 'pass', detail: 'Author byline element found.' };
+        const meta = doc.querySelector('meta[name="author"]');
+        if (meta && meta.getAttribute('content')) return { pass: 'warn', detail: `Only meta author tag: "${meta.getAttribute('content')}". Add a visible byline.` };
+        return { pass: 'fail', detail: 'No author byline. Anonymous content scores low for Expertise.' };
+      }},
+      { id: 'author-bio', label: 'Author bio section', pts: 4, fn: (doc, text) => {
+        const bio = doc.querySelector('.author-bio, .bio, [class*="about-author"], [class*="author-info"]');
+        if (bio) return { pass: 'pass', detail: 'Author bio section found.' };
+        const aboutLink = doc.querySelector('a[href*="/author"], a[href*="/about"]');
+        if (aboutLink) return { pass: 'warn', detail: 'Link to author/about page found, but no inline bio.' };
+        return { pass: 'fail', detail: 'No author bio section or author page link.' };
+      }},
+      { id: 'word-count', label: 'Substantial content (>500 words)', pts: 4, fn: (doc, text) => {
+        const wc = text.split(/\s+/).filter(Boolean).length;
+        if (wc >= 1500) return { pass: 'pass', detail: `${wc} words. Deep coverage.` };
+        if (wc >= 500) return { pass: 'pass', detail: `${wc} words. Adequate depth.` };
+        if (wc >= 200) return { pass: 'warn', detail: `${wc} words. Thin for an expertise-claim page.` };
+        return { pass: 'fail', detail: `${wc} words. Too thin to demonstrate expertise.` };
+      }}
+    ]
+  },
+  authoritativeness: {
+    letter: 'A',
+    label: 'Authoritativeness',
+    sub: 'Schema, citations, and outbound links',
+    checks: [
+      { id: 'person-schema', label: 'Person or Article schema present', pts: 7, fn: (doc) => {
+        const scripts = doc.querySelectorAll('script[type="application/ld+json"]');
+        let hasPerson = false, hasArticle = false;
+        scripts.forEach(s => {
+          try {
+            const j = JSON.parse(s.textContent);
+            const types = Array.isArray(j) ? j.map(x => x['@type']) : [j['@type']];
+            if (types.includes('Person')) hasPerson = true;
+            if (types.some(t => ['Article', 'NewsArticle', 'BlogPosting'].includes(t))) {
+              hasArticle = true;
+              const author = Array.isArray(j) ? j.find(x => x.author)?.author : j.author;
+              if (author && (author['@type'] === 'Person' || author.name)) hasPerson = true;
+            }
+          } catch(e) {}
+        });
+        if (hasArticle && hasPerson) return { pass: 'pass', detail: 'Article schema with Person author found.' };
+        if (hasArticle) return { pass: 'warn', detail: 'Article schema found but no Person author inside it.' };
+        if (hasPerson) return { pass: 'warn', detail: 'Person schema found but no Article schema.' };
+        return { pass: 'fail', detail: 'No Person or Article schema. Both raise Authoritativeness signals.' };
+      }},
+      { id: 'sameAs', label: 'sameAs profile links', pts: 4, fn: (doc) => {
+        const scripts = doc.querySelectorAll('script[type="application/ld+json"]');
+        let total = 0;
+        scripts.forEach(s => {
+          try {
+            const j = JSON.parse(s.textContent);
+            const items = Array.isArray(j) ? j : [j];
+            items.forEach(item => {
+              const sa = item.sameAs || (item.author && item.author.sameAs);
+              if (Array.isArray(sa)) total += sa.length;
+            });
+          } catch(e) {}
+        });
+        if (total >= 3) return { pass: 'pass', detail: `${total} sameAs profile links.` };
+        if (total >= 1) return { pass: 'warn', detail: `${total} sameAs link(s). Aim for 3+: GitHub, LinkedIn, Twitter, personal site.` };
+        return { pass: 'fail', detail: 'No sameAs profile links. These connect the author to their public identity.' };
+      }},
+      { id: 'outbound-cite', label: 'Outbound citation links', pts: 4, fn: (doc) => {
+        const links = doc.querySelectorAll('a[href^="http"]');
+        const external = Array.from(links).filter(a => {
+          const href = a.getAttribute('href');
+          return href && !href.includes('javascript:') && !href.includes('mailto:');
+        });
+        if (external.length >= 3) return { pass: 'pass', detail: `${external.length} outbound links found.` };
+        if (external.length >= 1) return { pass: 'warn', detail: `${external.length} outbound link(s). Authoritative pages cite sources.` };
+        return { pass: 'fail', detail: 'No outbound citation links. Pages with zero outbound links signal closed-loop content.' };
+      }}
+    ]
+  },
+  trust: {
+    letter: 'T',
+    label: 'Trust',
+    sub: 'Dates, contact info, and transparency',
+    checks: [
+      { id: 'date-published', label: 'datePublished or visible publish date', pts: 6, fn: (doc) => {
+        const time = doc.querySelector('time[datetime]');
+        const scripts = doc.querySelectorAll('script[type="application/ld+json"]');
+        let schemaDate = null;
+        scripts.forEach(s => {
+          try {
+            const j = JSON.parse(s.textContent);
+            const items = Array.isArray(j) ? j : [j];
+            items.forEach(item => { if (item.datePublished) schemaDate = item.datePublished; });
+          } catch(e) {}
+        });
+        if (time && schemaDate) return { pass: 'pass', detail: `Visible <time> and schema datePublished both found (${schemaDate}).` };
+        if (schemaDate) return { pass: 'pass', detail: `Schema datePublished: ${schemaDate}` };
+        if (time) return { pass: 'warn', detail: `Visible date present but no schema datePublished.` };
+        return { pass: 'fail', detail: 'No publish date in any form. Undated content scores low for Trust.' };
+      }},
+      { id: 'date-modified', label: 'dateModified for freshness', pts: 3, fn: (doc) => {
+        const scripts = doc.querySelectorAll('script[type="application/ld+json"]');
+        let mod = null;
+        scripts.forEach(s => {
+          try {
+            const j = JSON.parse(s.textContent);
+            const items = Array.isArray(j) ? j : [j];
+            items.forEach(item => { if (item.dateModified) mod = item.dateModified; });
+          } catch(e) {}
+        });
+        if (mod) return { pass: 'pass', detail: `dateModified: ${mod}` };
+        return { pass: 'warn', detail: 'No dateModified. Signals stale content to AI engines.' };
+      }},
+      { id: 'contact', label: 'Contact info or contact link', pts: 4, fn: (doc, text) => {
+        const contactLink = doc.querySelector('a[href*="contact"], a[href^="mailto:"]');
+        const emailInText = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+        if (contactLink || emailInText) return { pass: 'pass', detail: contactLink ? 'Contact link found.' : `Email found: ${emailInText[0]}` };
+        return { pass: 'fail', detail: 'No contact link or email. Pages with no way to reach the author look untrustworthy.' };
+      }},
+      { id: 'publisher', label: 'Publisher organization in schema', pts: 4, fn: (doc) => {
+        const scripts = doc.querySelectorAll('script[type="application/ld+json"]');
+        let pub = null;
+        scripts.forEach(s => {
+          try {
+            const j = JSON.parse(s.textContent);
+            const items = Array.isArray(j) ? j : [j];
+            items.forEach(item => { if (item.publisher && item.publisher.name) pub = item.publisher.name; });
+          } catch(e) {}
+        });
+        if (pub) return { pass: 'pass', detail: `Publisher: ${pub}` };
+        return { pass: 'warn', detail: 'No publisher in schema. Article schema benefits from a named publisher.' };
+      }}
+    ]
+  }
+};
+
+function runAudit(html) {
+  if (!html.trim()) return null;
+  let doc;
+  try {
+    const parser = new DOMParser();
+    doc = parser.parseFromString(html, 'text/html');
+  } catch (e) {
+    return null;
+  }
+  const bodyText = (doc.body ? doc.body.textContent : '').replace(/\s+/g, ' ').trim();
+  const results = {};
+  let totalScore = 0;
+  let maxScore = 0;
+  let passed = 0;
+  let totalChecks = 0;
+
+  Object.entries(CHECKS).forEach(([key, dim]) => {
+    const checkResults = dim.checks.map(c => {
+      const r = c.fn(doc, bodyText);
+      totalChecks++;
+      const earned = r.pass === 'pass' ? c.pts : (r.pass === 'warn' ? Math.round(c.pts * 0.5) : 0);
+      if (r.pass === 'pass') passed++;
+      totalScore += earned;
+      maxScore += c.pts;
+      return { ...c, ...r, earned };
+    });
+    const dimEarned = checkResults.reduce((s, c) => s + c.earned, 0);
+    const dimMax = checkResults.reduce((s, c) => s + c.pts, 0);
+    results[key] = { ...dim, checks: checkResults, earned: dimEarned, max: dimMax };
+  });
+
+  return { results, totalScore, maxScore, passed, totalChecks, percent: Math.round((totalScore / maxScore) * 100) };
+}
+
+function renderResults(audit) {
+  if (!audit) {
+    $('dim-list').innerHTML = '<div class="placeholder">Audit results will appear here.</div>';
+    $('score-circle').textContent = '0';
+    $('score-circle').className = 'score-circle';
+    $('score-title').textContent = 'Awaiting input';
+    $('score-desc').textContent = 'Paste page HTML and click "Run audit".';
+    $('checks-passed').textContent = '0';
+    return;
+  }
+  const pct = audit.percent;
+  $('score-circle').textContent = pct;
+  let cls = '', title = '', desc = '';
+  if (pct >= 75) {
+    cls = 'high';
+    title = 'Strong E-E-A-T signals';
+    desc = 'Page demonstrates Experience, Expertise, Authoritativeness, and Trust well.';
+  } else if (pct >= 50) {
+    cls = 'mid';
+    title = 'Mixed signals';
+    desc = 'Some E-E-A-T signals present; specific dimensions need work.';
+  } else {
+    cls = 'low';
+    title = 'Weak E-E-A-T signals';
+    desc = 'Multiple dimensions are missing or thin. Address fails below.';
+  }
+  $('score-circle').className = 'score-circle ' + cls;
+  $('score-title').textContent = title;
+  $('score-desc').textContent = desc;
+  $('checks-passed').textContent = `${audit.passed}/${audit.totalChecks}`;
+
+  const list = $('dim-list');
+  list.innerHTML = '';
+  Object.values(audit.results).forEach(dim => {
+    const dimPct = Math.round((dim.earned / dim.max) * 100);
+    let dimCls = 'low';
+    if (dimPct >= 75) dimCls = 'high';
+    else if (dimPct >= 50) dimCls = 'mid';
+    const wrap = document.createElement('div');
+    wrap.className = 'dimension';
+    wrap.innerHTML = `
+      <div class="dim-head">
+        <div class="dim-letter">${dim.letter}</div>
+        <div>
+          <div class="dim-title">${dim.label}<small>${dim.sub}</small></div>
+        </div>
+        <div class="dim-score ${dimCls}">${dim.earned} / ${dim.max}</div>
+      </div>
+      <div class="check-list">
+        ${dim.checks.map(c => `
+          <div class="check ${c.pass}">
+            <div class="check-icon">${c.pass === 'pass' ? '+' : (c.pass === 'warn' ? '~' : 'x')}</div>
+            <div>
+              <span class="check-label">${escapeHtml(c.label)}</span>
+              <span class="check-detail">${escapeHtml(c.detail)}</span>
+            </div>
+            <span class="check-pts">${c.earned}/${c.pts}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    list.appendChild(wrap);
+  });
+}
+
+function escapeHtml(s) { return String(s||'').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+$('audit-btn').addEventListener('click', () => {
+  const html = $('html-input').value;
+  if (!html.trim()) { renderResults(null); return; }
+  renderResults(runAudit(html));
+});
+
+document.querySelectorAll('[data-example]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const ex = EXAMPLES[btn.dataset.example];
+    $('html-input').value = ex;
+    if (ex) renderResults(runAudit(ex));
+    else renderResults(null);
+  });
+});
+
+$('theme-toggle').addEventListener('click', () => {
+  const cur = document.body.dataset.theme;
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.body.dataset.theme = next;
+  $('theme-toggle').textContent = next === 'dark' ? 'Light mode' : 'Dark mode';
+});
+
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.body.dataset.theme = 'dark';
+  $('theme-toggle').textContent = 'Light mode';
+}
+</script>
+</body>
+</html>
