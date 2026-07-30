@@ -83,6 +83,10 @@ All three together cover passage > document > README.
 - [llms-txt-generator](https://github.com/0xelitesystem/llms-txt-generator): help AI engines find your strong pages first
 - [geo-audit-checklist](https://github.com/0xelitesystem/geo-audit-checklist): full GEO checklist with E-E-A-T as one section
 
+## More
+
+Part of a catalog of single-file browser tools and plain-language references, all MIT licensed and dependency-free: [0xelitesystem.github.io](https://0xelitesystem.github.io/). Built by [elitesystem.ai](https://elitesystem.ai).
+
 ## License
 
 MIT. Free to use, fork, modify, and ship.
