@@ -40,7 +40,7 @@
   --bg-input: #1c2128;
   --ink: #e6ebef;
   --ink-soft: #a8b0b8;
-  --ink-faint: #6a7280;
+  --ink-faint: #898983;
   --rule: #2a3138;
   --rule-soft: #1e242a;
   --teal: #4ab0b8;
@@ -49,6 +49,7 @@
   --good: #6aa874;
   --warn: #d4a548;
   --bad: #d97070;
+  --on-accent: #0a0a0a;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
@@ -147,7 +148,7 @@ header {
   font-family: var(--mono);
   font-size: 11px;
   background: var(--teal);
-  color: #fff;
+  color: var(--on-accent);
   padding: 2px 7px;
   border-radius: 2px;
   font-weight: 600;
@@ -182,14 +183,14 @@ textarea.html-input:focus { outline: none; border-color: var(--teal); }
   padding: 9px 16px;
   border: 1.5px solid var(--teal);
   background: var(--teal);
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
   border-radius: 4px;
   font-weight: 600;
 }
 .btn:hover { background: var(--teal-soft); border-color: var(--teal-soft); }
 .btn.secondary { background: transparent; color: var(--teal); }
-.btn.secondary:hover { background: var(--teal); color: #fff; }
+.btn.secondary:hover { background: var(--teal); color: var(--on-accent); }
 .btn.ghost { background: transparent; border-color: var(--rule); color: var(--ink-soft); }
 .btn.ghost:hover { border-color: var(--ink); color: var(--ink); }
 
@@ -253,7 +254,7 @@ textarea.html-input:focus { outline: none; border-color: var(--teal); }
   height: 30px;
   border-radius: 50%;
   background: var(--teal);
-  color: #fff;
+  color: var(--on-accent);
   font-family: var(--mono);
   font-weight: 700;
   font-size: 13px;
@@ -307,7 +308,7 @@ textarea.html-input:focus { outline: none; border-color: var(--teal); }
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 700;
-  color: #fff;
+  color: var(--on-accent);
   flex-shrink: 0;
   margin-top: 1px;
 }
@@ -371,12 +372,13 @@ footer a:hover { text-decoration: underline; }
   --bg-input: #111110;
   --good: #7ddc7d;
   --ink: #e8e8e3;
-  --ink-faint: #6e6e68;
+  --ink-faint: #898983;
   --ink-soft: #a8a8a3;
   --rule: #1f1f1d;
   --rule-soft: #1f1f1d;
   --teal: #d4ff3a;
   --warn: #ffb454;
+  --on-accent: #0a0a0a;
 }
 :root[data-theme="light"] {
   --bad: #a82d14;
@@ -385,12 +387,14 @@ footer a:hover { text-decoration: underline; }
   --bg-input: #dee2e8;
   --good: #1a5c2e;
   --ink: #0a0a0a;
-  --ink-faint: #6e6e68;
+  --ink-faint: #5c5c56;
   --ink-soft: #2a2a27;
   --rule: #c8cdd5;
   --rule-soft: #c8cdd5;
   --teal: #2d6b00;
+  --teal-soft: #278189;
   --warn: #8a4d00;
+  --on-accent: #fff;
 }
 :root { color-scheme: dark; }
 :root[data-theme="light"] { color-scheme: light; }
@@ -816,11 +820,8 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
 (function () {
   var KEY = "theme";
   var btn = document.querySelector("#theme-toggle, #theme-btn, .theme-btn, .theme-toggle, [data-theme-toggle]");
-  function host() {
-    if (document.documentElement.hasAttribute("data-theme")) { return document.documentElement; }
-    if (document.body && document.body.hasAttribute("data-theme")) { return document.body; }
-    return document.documentElement;
-  }
+  // This page's own toggle switches <body> while <html> keeps a fixed brand theme, so remember <body>.
+  function host() { return document.body || document.documentElement; }
   function current() { return host().getAttribute("data-theme") || ""; }
   function setter() {
     if (typeof setTheme === "function") { return setTheme; }
