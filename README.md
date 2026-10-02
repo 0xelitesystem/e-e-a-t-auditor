@@ -44,7 +44,7 @@ Paste a page's HTML source. Get a 0-100 score broken down across the four E-E-A-
 
 Total: 60 points possible, normalized to a 0-100 score.
 
-## Use it
+## Use
 
 Open `index.html` in any browser. Or visit `https://0xelitesystem.github.io/e-e-a-t-auditor/`.
 
@@ -82,6 +82,27 @@ All three together cover passage > document > README.
 - [schema-markup-generator](https://github.com/0xelitesystem/schema-markup-generator): generate the schema this auditor checks for
 - [llms-txt-generator](https://github.com/0xelitesystem/llms-txt-generator): help AI engines find your strong pages first
 - [geo-audit-checklist](https://github.com/0xelitesystem/geo-audit-checklist): full GEO checklist with E-E-A-T as one section
+
+## Why this exists
+
+Checking a page for E-E-A-T signals by hand means reading the source for bylines, schema, dates and citations one at a time. This scores the thirteen checks above from pasted HTML in a single file with no backend and no tracking, under the MIT license.
+
+## Privacy
+
+Everything runs in your browser. The HTML you paste is scored locally and is never uploaded; the page makes no network requests and does not fetch the URL of the page you are auditing. If you use the theme toggle, your light or dark choice is saved in your browser's localStorage under the key `theme`. Nothing you paste or type is stored.
+
+## Run locally
+
+```
+git clone https://github.com/0xelitesystem/e-e-a-t-auditor
+cd e-e-a-t-auditor
+```
+
+Open `index.html` in a browser. Or serve the folder with `python -m http.server` and visit http://localhost:8000.
+
+## Build
+
+No build step. The whole tool is one `index.html` file with inline CSS and JavaScript, and no dependencies.
 
 ## More
 
