@@ -80,7 +80,7 @@ All three together cover passage > document > README.
 
 - [ai-citability-scorer](https://github.com/0xelitesystem/ai-citability-scorer): score one paragraph at a time
 - [schema-markup-generator](https://github.com/0xelitesystem/schema-markup-generator): generate the schema this auditor checks for
-- [llms-txt-generator](https://github.com/0xelitesystem/llms-txt-generator): help AI engines find your strong pages first
+- [llms-txt-file-builder](https://github.com/0xelitesystem/llms-txt-file-builder): help AI engines find your strong pages first
 - [geo-audit-checklist](https://github.com/0xelitesystem/geo-audit-checklist): full GEO checklist with E-E-A-T as one section
 
 ## Why this exists
