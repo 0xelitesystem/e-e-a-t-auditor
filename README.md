@@ -1,8 +1,8 @@
-# e-e-a-t-auditor
+# page-trust-signals-auditor
 
 Audit any web page's HTML for E-E-A-T signals: Experience, Expertise, Authoritativeness, Trust. Browser-only.
 
-**Live demo:** https://0xelitesystem.github.io/e-e-a-t-auditor/
+**Live demo:** https://0xelitesystem.github.io/page-trust-signals-auditor/
 
 ![Screenshot of the E-E-A-T auditor interface](screenshot.png)
 
@@ -46,7 +46,7 @@ Total: 60 points possible, normalized to a 0-100 score.
 
 ## Use
 
-Open `index.html` in any browser. Or visit `https://0xelitesystem.github.io/e-e-a-t-auditor/`.
+Open `index.html` in any browser. Or visit `https://0xelitesystem.github.io/page-trust-signals-auditor/`.
 
 1. Open any page in your browser.
 2. Right-click and select "View page source".
@@ -67,7 +67,7 @@ Try the strong example and weak example buttons to see the contrast.
 
 - [ai-citability-scorer](https://github.com/0xelitesystem/ai-citability-scorer) scores a single paragraph for AI citation likelihood.
 - [readme-slop-checker](https://github.com/0xelitesystem/readme-slop-checker) scans README files specifically for AI-generated slop patterns.
-- **e-e-a-t-auditor scores the whole page** for the trust signals AI engines and Google use.
+- **page-trust-signals-auditor scores the whole page** for the trust signals AI engines and Google use.
 
 All three together cover passage > document > README.
 
@@ -94,8 +94,8 @@ Everything runs in your browser. The HTML you paste is scored locally and is nev
 ## Run locally
 
 ```
-git clone https://github.com/0xelitesystem/e-e-a-t-auditor
-cd e-e-a-t-auditor
+git clone https://github.com/0xelitesystem/page-trust-signals-auditor
+cd page-trust-signals-auditor
 ```
 
 Open `index.html` in a browser. Or serve the folder with `python -m http.server` and visit http://localhost:8000.
